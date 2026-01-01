@@ -1,0 +1,32 @@
+# Binary
+/line
+/line-cli
+
+# Build
+/dist/
+
+# IDE
+.cursor/
+.idea/
+*.swp
+*.swo
+
+# Specstory
+.specstory/
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Test
+coverage.out
+*.test
+
+# Credentials (never commit)
+credentials.json
+*.pem
+*.key
+
+# Plans and reference docs (local only)
+docs/plans/
+reference/
