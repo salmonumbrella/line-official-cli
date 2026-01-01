@@ -53,6 +53,21 @@ archives:
 checksum:
   name_template: "checksums.txt"
 
+brews:
+  - name: line-cli
+    repository:
+      owner: salmonumbrella
+      name: homebrew-tap
+      token: "{{ .Env.HOMEBREW_TAP_TOKEN }}"
+    directory: Formula
+    homepage: "https://github.com/salmonumbrella/line-official-cli"
+    description: "CLI for LINE Official Account / Messaging API"
+    license: "MIT"
+    install: |
+      bin.install "line"
+    test: |
+      system "#{bin}/line", "--help"
+
 changelog:
   sort: asc
   filters:
