@@ -1,13 +1,32 @@
 version: 2
+
 project_name: line-cli
 
 builds:
-  - main: ./cmd/line
+  # Darwin builds require CGO for keychain access
+  - id: line-darwin
+    main: ./cmd/line
+    binary: line
+    env:
+      - CGO_ENABLED=1
+    goos:
+      - darwin
+    goarch:
+      - amd64
+      - arm64
+    ldflags:
+      - -s -w
+      - -X github.com/salmonumbrella/line-official-cli/internal/cmd.version={{.Version}}
+      - -X github.com/salmonumbrella/line-official-cli/internal/cmd.commit={{.ShortCommit}}
+      - -X github.com/salmonumbrella/line-official-cli/internal/cmd.date={{.Date}}
+
+  # Linux and Windows builds without CGO
+  - id: line-other
+    main: ./cmd/line
     binary: line
     env:
       - CGO_ENABLED=0
     goos:
-      - darwin
       - linux
       - windows
     goarch:
@@ -16,22 +35,30 @@ builds:
     ldflags:
       - -s -w
       - -X github.com/salmonumbrella/line-official-cli/internal/cmd.version={{.Version}}
-      - -X github.com/salmonumbrella/line-official-cli/internal/cmd.commit={{.Commit}}
+      - -X github.com/salmonumbrella/line-official-cli/internal/cmd.commit={{.ShortCommit}}
       - -X github.com/salmonumbrella/line-official-cli/internal/cmd.date={{.Date}}
 
 archives:
-  - formats: [tar.gz]
-    name_template: "{{ .ProjectName }}_{{ .Os }}_{{ .Arch }}"
+  - id: default
+    formats:
+      - tar.gz
     format_overrides:
       - goos: windows
-        formats: [zip]
+        formats:
+          - zip
+    name_template: "{{ .ProjectName }}_{{ .Version }}_{{ .Os }}_{{ .Arch }}"
+    files:
+      - README.md
 
 checksum:
-  name_template: 'checksums.txt'
+  name_template: "checksums.txt"
 
 changelog:
   sort: asc
   filters:
     exclude:
-      - '^docs:'
-      - '^test:'
+      - "^docs:"
+      - "^test:"
+      - "^ci:"
+      - Merge pull request
+      - Merge branch
