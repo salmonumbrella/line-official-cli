@@ -1,0 +1,25 @@
+name: Update Homebrew
+
+on:
+  release:
+    types: [published]
+
+jobs:
+  update-homebrew:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Trigger homebrew-tap update
+        uses: peter-evans/repository-dispatch@v3
+        with:
+          token: ${{ secrets.HOMEBREW_TAP_TOKEN }}
+          repository: salmonumbrella/homebrew-tap
+          event-type: update-formula
+          client-payload: |
+            {
+              "formula_name": "line-cli",
+              "version": "${{ github.event.release.tag_name }}",
+              "repo": "salmonumbrella/line-official-cli",
+              "binary_name": "line",
+              "archive_prefix": "line",
+              "description": "CLI for LINE Official Account API"
+            }
